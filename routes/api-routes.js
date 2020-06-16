@@ -24,4 +24,17 @@ router.post("/api/notes", async (req, res) => {
   res.json(data);
 });
 
+// Delete note from array using req.params
+// /api/notes/:id
+router.delete("/api/notes/:id", async (req, res) => {
+  const data = JSON.parse(await readFileAsync("./db/todos.json", "utf8"));
+  const incomingID = req.params.id;
+  data.forEach((value, index) => {
+    if (value.id == incomingID) {
+      data.splice(index, 1);
+    }
+  });
+  await writeFileAsync("./db/todos.json", JSON.stringify(data, null, 2));
+});
+
 module.exports = router;
