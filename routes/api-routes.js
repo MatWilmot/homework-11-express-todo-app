@@ -1,0 +1,27 @@
+const express = require("express");
+const router = express.Router();
+const fs = require("fs");
+const util = require("util");
+
+const readFileAsync = util.promisify(fs.readFile);
+const writeFileAsync = util.promisify(fs.writeFile);
+
+// get all notes
+// /api/notes
+router.get("/api/notes", async (req, res) => {
+  let file = JSON.parse(await readFileAsync("./db/todos.json", "utf8"));
+  res.json(file);
+});
+
+// Post new note
+// /api/notes
+router.post("/api/notes", async (req, res) => {
+  const data = JSON.parse(await readFileAsync("./db/todos.json", "utf8"));
+  const newTodo = req.body;
+  newTodo.id = data.length + 1;
+  data.push(newTodo);
+  await writeFileAsync("./db/todos.json", JSON.stringify(data, null, 2));
+  res.json(data);
+});
+
+module.exports = router;
